@@ -4,12 +4,12 @@ import sys, os, re
 def miniturize(fname):
     fpath = "data/" + fname
     # Open the file to be cleaned
-    if(os.path.isfile(fpath)):
+    if (os.path.isfile(fpath)):
         f = pd.read_csv(fpath, low_memory=False, nrows=500000)
     else:
-        print("ERROR: %s is an invalid file path" % fpath)
+        print(f"ERROR: {fpath} is an invalid file path")
         exit(1)
-    
+
     mini = f
     #mini = f.iloc[::100, :]
     mini.to_csv('./small_data/' + fname)
@@ -20,5 +20,5 @@ paths = [f for f in os.listdir("./data/") if re.match(r".*\.csv", f)]
 
 root_path = "data/"
 for path in paths:
-    print("Miniturizing %s" % path)
+    print(f"Miniturizing {path}")
     miniturize(path)

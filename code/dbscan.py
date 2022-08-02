@@ -13,23 +13,15 @@ def dbscan(dataSet, name, col1, col2, saveName):
     #============================
 
     projectsData = pd.read_csv(dataSet, usecols=[name, col1, col2], low_memory=False)
-    #projectsData = pd.read_csv(dataSet, low_memory=False)
-    #print(projectsData.head())
-    #print(projectsData[name])
-    #print(projectsData[col1])
-    #print(projectsData[col2])
-    data = []
     kData = []
     kDataX = []
     kDataY = []
-    for row in projectsData.iterrows():
-        if row[1][0]:
-            if row[1][1] > 0:
-                if row[1][2] > 0:
-                    # Name, x, y, cluster 
-                    data.append((row[1][0], [row[1][1], row[1][2]], 0))
-        else:
-            pass
+    data = [
+        (row[1][0], [row[1][1], row[1][2]], 0)
+        for row in projectsData.iterrows()
+        if row[1][0] and row[1][1] > 0 and row[1][2] > 0
+    ]
+
     for x in data:
         kData.append(x[1])
         kDataX.append(x[1][0])

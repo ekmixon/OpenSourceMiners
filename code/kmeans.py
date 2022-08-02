@@ -12,23 +12,15 @@ def kmeans(dataSet, name, col1, col2, saveName):
     #============================
 
     projectsData = pd.read_csv(dataSet, usecols=[name, col1, col2], low_memory=False, nrows=500)
-    #projectsData = pd.read_csv(dataSet, low_memory=False)
-    #print(projectsData.head())
-    #print(projectsData[name])
-    #print(projectsData[col1])
-    #print(projectsData[col2])
-    data = []
     kData = []
     kDataX = []
     kDataY = []
-    for row in projectsData.iterrows():
-        if row[1][0]:
-            if row[1][1] > 0:
-                if row[1][2] > 0:
-                    # Name, x, y, cluster 
-                    data.append((row[1][0], [row[1][1], row[1][2]], 0))
-        else:
-            pass
+    data = [
+        (row[1][0], [row[1][1], row[1][2]], 0)
+        for row in projectsData.iterrows()
+        if row[1][0] and row[1][1] > 0 and row[1][2] > 0
+    ]
+
     for x in data:
         kData.append(x[1])
         kDataX.append(x[1][0])
@@ -54,37 +46,30 @@ def kmeans(dataSet, name, col1, col2, saveName):
         elif x == 5:
             count[5] = count[5] + 1
     print(count)
-    #print(kmeans.labels_[0])
-    jdata = {}
     nodes = []
     links = []
     index = 0
     for i in projectsData[name]:
         if len(kmeans.labels_) > index:
-            x = {}
-            x["id"] = str(i)
+            x = {"id": str(i)}
             x["group"] = int(kmeans.labels_[index]) + 1
             nodes.append(x)
-            y = {}
-            y["source"] = str(i)
-            y["target"] = str(int(kmeans.labels_[index]) + 1)
-            y["value"] = 1
+            y = {
+                "source": str(i),
+                "target": str(int(kmeans.labels_[index]) + 1),
+                "value": 1,
+            }
+
             links.append(y)
 
-        else:
-            pass
         index = index + 1  
 
-    a = {}
-    b = {}
     c = {}
     d = {}
     e = {}
     f = {}
-    a["id"] = "1"
-    a["group"] = 1
-    b["id"] = "2"
-    b["group"] = 2
+    a = {"id": "1", "group": 1}
+    b = {"id": "2", "group": 2}
     c["id"] = "3"
     c["group"] = 3
     d["id"] = "4"
@@ -93,28 +78,17 @@ def kmeans(dataSet, name, col1, col2, saveName):
     e["group"] = 5
     f["id"] = "6"
     f["group"] = 6
-    nodes.append(a)
-    nodes.append(b)
-    nodes.append(c)
-    nodes.append(d)
-    nodes.append(e)
-    nodes.append(f)
+    nodes.extend((a, b, c, d, e, f))
     count1 = 0
     for i in kmeans.cluster_centers_:
         count1 = count1 + 1
         count2 = count1
-        for j in kmeans.cluster_centers_[count1:]:
+        for _ in kmeans.cluster_centers_[count1:]:
             if count2 < 6:
                 count2 = count2 + 1
-                y = {}
-                y["source"] = str(count1)
-                y["target"] = str(count2)
-                y["value"] = 3
+                y = {"source": str(count1), "target": str(count2), "value": 3}
                 links.append(y)
-            else:
-                pass
-    jdata["nodes"] = nodes
-    jdata["links"] = links
+    jdata = {"nodes": nodes, "links": links}
     #print(json.dumps(jdata))
     with open(saveName, 'w') as outfile:
         json.dump(jdata, outfile)
